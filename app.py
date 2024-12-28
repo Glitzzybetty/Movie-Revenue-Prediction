@@ -1,30 +1,87 @@
 import pickle
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+from typing import Optional
 
-# Load the model
+# Load the trained model
 with open("watch-it_model.pkl", "rb") as file:
     model = pickle.load(file)
 
-# Initialize Flask app
-app = Flask(__name__)
+# Define the FastAPI app
+app = FastAPI()
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    # Get JSON input
-    data = request.get_json()
-    if not data:
-        return jsonify({"error": "Invalid input"}), 400
 
-    # Extract features (assumes the input is a dictionary of features)
+# Define the input schema
+class MovieData(BaseModel):
+    country: str
+    genres: str
+    language: Optional[str] = None
+    writer_count: Optional[float] = None
+    title_adaption: str
+    censor_rating: Optional[str] = None
+    runtime: float
+    users_votes: float
+    comments: Optional[float] = None
+    likes: Optional[float] = None
+    overall_views: Optional[float] = None
+    dislikes: Optional[float] = None
+    ratings_imdb: float
+    ratings_tomatoes: float
+    ratings_metacritic: float
+    special_award: int
+    awards_win: int
+    awards_nomination: int
+    month_to_dvd_release: int
+    release_month: Optional[str] = None
+    release_quarter: str
+    engagement_ratio: Optional[float] = None
+    feedback_ratio: Optional[float] = None
+    award_nomination_win_ratio: Optional[float] = None
+    number_of_genres: int
+    number_of_languages: Optional[float] = None
+    number_of_countries: int
+
+
+@app.get("/")
+def home():
+    return {"message": "Welcome to the Movie Revenue Prediction API!"}
+
+
+@app.post("/predict/")
+def predict(data: MovieData):
     try:
-        features = data["features"]
-    except KeyError:
-        return jsonify({"error": "Missing 'features' key"}), 400
-
-    # Make prediction
-    prediction = model.predict([features])[0]
-
-    return jsonify({"prediction": prediction})
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        # Convert input to model features
+        features = [
+            data.country,
+            data.genres,
+            data.language,
+            data.writer_count,
+            data.title_adaption,
+            data.censor_rating,
+            data.runtime,
+            data.users_votes,
+            data.comments,
+            data.likes,
+            data.overall_views,
+            data.dislikes,
+            data.ratings_imdb,
+            data.ratings_tomatoes,
+            data.ratings_metacritic,
+            data.special_award,
+            data.awards_win,
+            data.awards_nomination,
+            data.month_to_dvd_release,
+            data.release_month,
+            data.release_quarter,
+            data.engagement_ratio,
+            data.feedback_ratio,
+            data.award_nomination_win_ratio,
+            data.number_of_genres,
+            data.number_of_languages,
+            data.number_of_countries,
+        ]
+        # Predict revenue category
+        prediction = model.predict([features])[0]
+        return {"revenue_category": prediction}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
