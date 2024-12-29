@@ -72,7 +72,6 @@ Access the app at: https://movie-revenue-prediction-equh8ryt3apptgtpgkb2jvm.stre
 Enter movie features in the Streamlit app or use tools like Postman to send a request to the FastAPI backend.
 Example curl request:
 ```bash
-Copy code
 curl -X POST -H "Content-Type: application/json" \
 -d '{"country": "USA", "genres": "Action", "runtime": 120, "users_votes": 1500, "ratings_imdb": 8.1, "ratings_tomatoes": 85, "ratings_metacritic": 75, "number_of_countries": 1}' \
 https://movie-revenue-prediction-ygbp.onrender.com//predict/
