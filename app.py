@@ -5,11 +5,12 @@ from pydantic import BaseModel
 from typing import Optional
 
 # Load the trained model
-with open("model.pkl", "rb") as file:
+with open("watch-it_model.pkl", "rb") as file:
     model = pickle.load(file)
 
 # Define the FastAPI app
 app = FastAPI()
+
 
 # Define the input schema
 class MovieData(BaseModel):
@@ -40,6 +41,7 @@ class MovieData(BaseModel):
     number_of_genres: int
     number_of_languages: Optional[float] = None
     number_of_countries: int
+
 
 @app.post("/predict/")
 def predict(data: MovieData):
