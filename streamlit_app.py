@@ -22,7 +22,7 @@ ratings_metacritic = st.number_input("Metacritic Rating", min_value=0.0, max_val
 number_of_countries = st.number_input("Number of Countries", min_value=1, step=1, value=1)
 
 # Backend API URL
-api_url = "http://127.0.0.1:8000/predict/"
+api_url = "https://movie-revenue-prediction-ygbp.onrender.com/predict/"
 
 # Prediction button
 if st.button("Predict Revenue Category"):
