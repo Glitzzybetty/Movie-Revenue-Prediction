@@ -141,12 +141,24 @@ Optional Features
     "number_of_languages": 1.0
 }
 ```
-Output
+Response Output Example
 ```json
 {
     "revenue_category": "High"
 }
 ```
+
+Error Response Example
+```json
+{
+    "detail": "Error: Missing or invalid input data"
+}
+```
+
+- **HTTP Status Codes:**
+   - 200: Success (prediction returned)
+   - 400: Bad Request (invalid input data)
+
 
 # 🛠️ Troubleshooting
 ### Common Issues
