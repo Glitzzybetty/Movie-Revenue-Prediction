@@ -1,15 +1,15 @@
 import pickle
+import pandas as pd
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional
 
 # Load the trained model
-with open("watch-it_model.pkl", "rb") as file:
+with open("model.pkl", "rb") as file:
     model = pickle.load(file)
 
 # Define the FastAPI app
 app = FastAPI()
-
 
 # Define the input schema
 class MovieData(BaseModel):
@@ -41,47 +41,14 @@ class MovieData(BaseModel):
     number_of_languages: Optional[float] = None
     number_of_countries: int
 
-
-@app.get("/")
-def home():
-    return {"message": "Welcome to the Movie Revenue Prediction API!"}
-
-
 @app.post("/predict/")
 def predict(data: MovieData):
     try:
-        # Convert input to model features
-        features = [
-            data.country,
-            data.genres,
-            data.language,
-            data.writer_count,
-            data.title_adaption,
-            data.censor_rating,
-            data.runtime,
-            data.users_votes,
-            data.comments,
-            data.likes,
-            data.overall_views,
-            data.dislikes,
-            data.ratings_imdb,
-            data.ratings_tomatoes,
-            data.ratings_metacritic,
-            data.special_award,
-            data.awards_win,
-            data.awards_nomination,
-            data.month_to_dvd_release,
-            data.release_month,
-            data.release_quarter,
-            data.engagement_ratio,
-            data.feedback_ratio,
-            data.award_nomination_win_ratio,
-            data.number_of_genres,
-            data.number_of_languages,
-            data.number_of_countries,
-        ]
-        # Predict revenue category
-        prediction = model.predict([features])[0]
+        # Convert input to a DataFrame
+        input_data = pd.DataFrame([data.dict()])
+
+        # Perform prediction
+        prediction = model.predict(input_data)[0]
         return {"revenue_category": prediction}
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=f"Error: {str(e)}")
